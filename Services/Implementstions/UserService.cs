@@ -15,9 +15,11 @@ namespace instantBid.Services.Implementstions
     {
 
         private readonly IUserRepoInterface userRepoInterface;
-        public UserService(IUserRepoInterface userRepoInterface)
+        private readonly JWTTokenService jWTTokenService;
+        public UserService(IUserRepoInterface userRepoInterface, JWTTokenService jWTTokenService)
         {
             this.userRepoInterface = userRepoInterface;
+            this.jWTTokenService = jWTTokenService;
         }
 
         public async Task<ServiceResponses<IEnumerable<User>>> getUsers(RegistrationDTO userDTO)
@@ -58,7 +60,7 @@ namespace instantBid.Services.Implementstions
                 return response;
             }
 
-            response.data = "1";
+            response.data = jWTTokenService.JWTServicesGenerator(existEmail);
             response.message = "Login successfully";
             response.status = true;
             return response;

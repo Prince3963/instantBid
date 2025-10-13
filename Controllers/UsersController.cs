@@ -1,6 +1,7 @@
 ﻿using instantBid.DTOs;
 using instantBid.HelperServices;
 using instantBid.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace instantBid.Controllers
             this.userInterface = userInterface;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("getAllUsers")]
         public async Task<IActionResult> getAllUser([FromQuery] RegistrationDTO userDTO)
@@ -36,7 +38,7 @@ namespace instantBid.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpPost]
         [Route("RegisterUser")]
         public async Task<ActionResult> RegisterUser([FromForm] RegistrationDTO registrationDTO)
