@@ -50,6 +50,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUserRepoInterface, UserRepo>();
 builder.Services.AddScoped<IUserServiceInterface, UserService>();
 builder.Services.AddScoped<JWTTokenService>();
+builder.Services.AddScoped<IAuctionRepoInterface, AuctionRepo>();
+builder.Services.AddScoped<IauctionServiceInterface, AuctionService>();
+
+
+//CROS Solution
+
+builder.Services.AddCors(option =>
+{
+    option.AddPolicy("frontend", policy =>
+    {
+        policy
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
+
 
 var app = builder.Build();
 
@@ -61,6 +78,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("frontend"); 
 
 app.UseAuthorization();
 

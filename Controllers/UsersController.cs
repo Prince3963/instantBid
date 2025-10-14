@@ -38,7 +38,7 @@ namespace instantBid.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         [Route("RegisterUser")]
         public async Task<ActionResult> RegisterUser([FromForm] RegistrationDTO registrationDTO)
