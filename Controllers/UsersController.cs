@@ -11,13 +11,38 @@ namespace instantBid.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserServiceInterface userInterface;
-        public UsersController(IUserServiceInterface userInterface)
+        private readonly IUserServiceInterface userService;
+        public UsersController(IUserServiceInterface userService)
         {
-            this.userInterface = userInterface;
+            this.userService = userService;
         }
 
-        [Authorize]
+
+        //User Profile
+        //[HttpGet]
+        //[Route("userProfile")]
+        //public async Task<IActionResult> userProfile()
+        //{
+        //    var result = await userService.userProfile();
+        //    return Ok(result);
+        //}
+
+        //API Done he Bas react me JWT se ID extract karvani he 
+
+        [HttpGet]
+        [Route("GetUserById")]
+        public async Task<IActionResult> getUserById()
+        {
+            var userId = int.Parse(User.FindFirst("userId").Value ?? "0");
+            var result = await userService.getUserByID(userId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
         [HttpGet]
         [Route("getAllUsers")]
         public async Task<IActionResult> getAllUser([FromQuery] RegistrationDTO userDTO)
@@ -25,7 +50,7 @@ namespace instantBid.Controllers
             var response = new ServiceResponses<string>();
             try
             {
-                var result = await userInterface.getUsers(userDTO);
+                var result = await userService.getUsers(userDTO);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -45,7 +70,7 @@ namespace instantBid.Controllers
         {
             try
             {
-                var result = await userInterface.registerUser(registrationDTO);
+                var result = await userService.registerUser(registrationDTO);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -62,24 +87,8 @@ namespace instantBid.Controllers
         [Route("/Login")]
         public async Task<IActionResult> loginUser([FromForm] LoginDTO loginDTO)
         {
-            var response = new ServiceResponses<string>();
-            try
-            {
-                var result = await userInterface.loginUser(loginDTO);
-                return Ok(result);
-            }
-            catch(Exception e)
-            {
-                response.data="0";
-                response.message = "Check User Controller Login API " + e.Message;
-                response.status = false;
-
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-            finally
-            {
-                Console.WriteLine("API work Successfully");
-            }
+            var result = await userService.loginUser(loginDTO);
+            return Ok(result);
         }
     }
 }

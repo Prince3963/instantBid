@@ -22,6 +22,18 @@ namespace instantBid.Services.Implementstions
             this.jWTTokenService = jWTTokenService;
         }
 
+        public async Task<List<RegistrationDTO>> userProfile()
+        {
+            var result = await userRepoInterface.userProfile();
+            return result
+                .Select(u => new RegistrationDTO
+                {
+                    Name = u.Name,
+                    Address = u.Address,
+                    Email = u.Email,
+                }).ToList();
+        }
+
         public async Task<ServiceResponses<IEnumerable<User>>> getUsers(RegistrationDTO userDTO)
         {
             var response = new ServiceResponses<IEnumerable<User>>();
@@ -57,7 +69,8 @@ namespace instantBid.Services.Implementstions
                 response.data = "0";
                 response.message = "Invalid email or password.";
                 response.status = false;
-                return response;
+
+                return null;
             }
 
             response.data = jWTTokenService.JWTServicesGenerator(existEmail);
@@ -94,5 +107,23 @@ namespace instantBid.Services.Implementstions
             return response;
         }
 
+        public async Task<ProfileDTO> getUserByID(int id)
+        {
+            var existUser = await userRepoInterface.getUserByID(id);
+            if (existUser == null)
+            {
+                return null;
+            }
+
+            return new ProfileDTO
+            {
+                Name = existUser.Name,
+                Email = existUser.Email,
+                AccountBalance = existUser.AccountBalance,
+                Address = existUser.Address,
+                DateOfBirth = existUser.DateOfBirth,
+                ProfileImage = existUser.ProfileImage,
+            };
+        }
     }
 }
