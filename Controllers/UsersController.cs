@@ -18,16 +18,6 @@ namespace instantBid.Controllers
         }
 
 
-        //User Profile
-        //[HttpGet]
-        //[Route("userProfile")]
-        //public async Task<IActionResult> userProfile()
-        //{
-        //    var result = await userService.userProfile();
-        //    return Ok(result);
-        //}
-
-        //API Done he Bas react me JWT se ID extract karvani he 
 
         [HttpGet]
         [Route("GetUserById")]
@@ -89,6 +79,23 @@ namespace instantBid.Controllers
         {
             var result = await userService.loginUser(loginDTO);
             return Ok(result);
+        }
+
+        [HttpPatch]
+        [Route("/updateUserData/{id}")]
+        public async Task<IActionResult> updateUserProfile([FromQuery] ProfileDTO profileDTO, int id)
+        {
+            try
+            {
+
+                var result = await userService.updateProfile(profileDTO, id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(" Check user Controller ........ " + ex);
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
         }
     }
 }

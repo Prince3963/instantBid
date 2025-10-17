@@ -72,6 +72,12 @@ namespace instantBid.Repositories.Implementations
            }).ToListAsync();
         }
 
+        public async Task updateUserData(User user)
+        {
+            dbContext.Users.Update(user);
+            await  dbContext.SaveChangesAsync();  
+        }
+
         public Task<List<User>> userProfile()
         {
             throw new NotImplementedException();

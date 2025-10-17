@@ -8,5 +8,7 @@
         public string? Address { get; set; }
         public string? ProfileImage { get; set; }
         public decimal? AccountBalance { get; set; }
+        public string? Password { get; set; }
+
     }
 }

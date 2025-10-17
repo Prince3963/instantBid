@@ -11,5 +11,6 @@ namespace instantBid.Repositories.Interfaces
         Task <User> getUserByID(int id);
         Task<List<User>> userProfile();
         Task<User> getUserByEmail(string email);
+        Task updateUserData(User user);
     }
 }

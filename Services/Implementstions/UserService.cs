@@ -125,5 +125,49 @@ namespace instantBid.Services.Implementstions
                 ProfileImage = existUser.ProfileImage,
             };
         }
+
+        public async Task<ServiceResponses<string>> updateProfile(ProfileDTO profileDTO, int id)
+        {
+            var resposnse = new ServiceResponses<string>();
+            try
+            {
+
+                var updateUser = await userRepoInterface.getUserByID(id);
+                if (updateUser == null)
+                {
+                    resposnse.data = "0";
+                    resposnse.message = "User not exist ";
+                    resposnse.status = false;
+                    
+                    return resposnse;
+                }
+
+                updateUser.Name = profileDTO.Name;
+                updateUser.Email = profileDTO.Email;    
+                updateUser.Address  = profileDTO.Address;
+                updateUser.AccountBalance = profileDTO.AccountBalance;
+
+                if (!string.IsNullOrWhiteSpace(profileDTO.Password))
+                {
+                    updateUser.Password = BCrypt.Net.BCrypt.HashPassword(profileDTO.Password);
+                }
+
+                await userRepoInterface.updateUserData(updateUser);
+
+                resposnse.data = "1";
+                resposnse.message = "Profile Update Successfully";
+                resposnse.status = true;
+
+                return resposnse;
+            }
+            catch (Exception ex)
+            {
+                resposnse.data = "0";
+                resposnse.message = "User not exist ";
+                resposnse.status = false;
+
+                return resposnse;
+            }
+        }
     }
 }
