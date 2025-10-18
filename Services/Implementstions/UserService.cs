@@ -16,10 +16,12 @@ namespace instantBid.Services.Implementstions
 
         private readonly IUserRepoInterface userRepoInterface;
         private readonly JWTTokenService jWTTokenService;
-        public UserService(IUserRepoInterface userRepoInterface, JWTTokenService jWTTokenService)
+        private readonly CloudinaryService cloudinaryService;
+        public UserService(IUserRepoInterface userRepoInterface, JWTTokenService jWTTokenService, CloudinaryService cloudinaryService)
         {
             this.userRepoInterface = userRepoInterface;
             this.jWTTokenService = jWTTokenService;
+            this.cloudinaryService = cloudinaryService;
         }
 
         public async Task<List<RegistrationDTO>> userProfile()
@@ -61,7 +63,7 @@ namespace instantBid.Services.Implementstions
             var response = new ServiceResponses<string>();
 
             var existEmail = await userRepoInterface.getUserByEmail(loginDTO.Email);
-            if(existEmail == null
+            if (existEmail == null
                 || string.IsNullOrWhiteSpace(existEmail.Password)
                 || !existEmail.Password.StartsWith("$2")
                 || !BCrypt.Net.BCrypt.Verify(loginDTO.Password, existEmail.Password))
@@ -81,9 +83,11 @@ namespace instantBid.Services.Implementstions
 
         public async Task<ServiceResponses<string>> registerUser(RegistrationDTO registrationDTO)
         {
-
             var response = new ServiceResponses<string>();
+
             var hashPassword = BCrypt.Net.BCrypt.HashPassword(registrationDTO.Password);
+
+
             var user = new User
             {
                 Name = registrationDTO.Name,
@@ -94,7 +98,6 @@ namespace instantBid.Services.Implementstions
                 AccountBalance = registrationDTO.AccountBalance,
                 Address = registrationDTO.Address,
                 DateOfBirth = registrationDTO.DateOfBirth,
-                ProfileImage = registrationDTO.ProfileImage,
                 RoleId = 2,
             };
 
@@ -122,30 +125,33 @@ namespace instantBid.Services.Implementstions
                 AccountBalance = existUser.AccountBalance,
                 Address = existUser.Address,
                 DateOfBirth = existUser.DateOfBirth,
-                ProfileImage = existUser.ProfileImage,
             };
         }
-
         public async Task<ServiceResponses<string>> updateProfile(ProfileDTO profileDTO, int id)
+
         {
             var resposnse = new ServiceResponses<string>();
+            var imageURL = await cloudinaryService.uploadImages(profileDTO.ProfileImage);
+            Console.WriteLine("img: " + imageURL);
+
+            Console.WriteLine("Received file: " + profileDTO.ProfileImage?.FileName);
             try
             {
-
                 var updateUser = await userRepoInterface.getUserByID(id);
                 if (updateUser == null)
                 {
                     resposnse.data = "0";
                     resposnse.message = "User not exist ";
                     resposnse.status = false;
-                    
+
                     return resposnse;
                 }
 
                 updateUser.Name = profileDTO.Name;
-                updateUser.Email = profileDTO.Email;    
-                updateUser.Address  = profileDTO.Address;
+                updateUser.Email = profileDTO.Email;
+                updateUser.Address = profileDTO.Address;
                 updateUser.AccountBalance = profileDTO.AccountBalance;
+                updateUser.ProfileImage = imageURL;
 
                 if (!string.IsNullOrWhiteSpace(profileDTO.Password))
                 {

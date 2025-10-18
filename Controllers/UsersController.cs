@@ -83,11 +83,12 @@ namespace instantBid.Controllers
 
         [HttpPatch]
         [Route("/updateUserData/{id}")]
-        public async Task<IActionResult> updateUserProfile([FromQuery] ProfileDTO profileDTO, int id)
+        public async Task<IActionResult> updateUserProfile([FromForm] ProfileDTO profileDTO, int id)
         {
+            Console.WriteLine("Controller hit with file: " + profileDTO.ProfileImage?.FileName);
+
             try
             {
-
                 var result = await userService.updateProfile(profileDTO, id);
                 return Ok(result);
             }

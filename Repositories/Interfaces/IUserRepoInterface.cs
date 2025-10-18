@@ -9,8 +9,9 @@ namespace instantBid.Repositories.Interfaces
         Task<IEnumerable<User>> getUsers(RegistrationDTO userDTO);
         Task<User> getUserByName(User user);
         Task <User> getUserByID(int id);
-        Task<List<User>> userProfile();
         Task<User> getUserByEmail(string email);
         Task updateUserData(User user);
+        Task<List<User>> userProfile();
+        
     }
 }
