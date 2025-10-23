@@ -89,7 +89,8 @@ namespace instantBid.Controllers
 
             try
             {
-                var result = await userService.updateProfile(profileDTO, id);
+                var userId = int.Parse(User.FindFirst("userId").Value ?? "0");
+                var result = await userService.updateProfile(profileDTO, userId);
                 return Ok(result);
             }
             catch (Exception ex)

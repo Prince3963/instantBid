@@ -63,14 +63,14 @@ namespace instantBid.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuctionId"));
 
-                    b.Property<TimeOnly?>("AuctionEndTime")
+                    b.Property<TimeSpan?>("AuctionEndTime")
                         .HasColumnType("time");
 
                     b.Property<string>("AuctionItemName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("AuctionStartTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan?>("AuctionStartTime")
+                        .HasColumnType("time");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");

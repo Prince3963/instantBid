@@ -10,8 +10,8 @@ namespace instantBid.Models
 
         public int AuctionId { get; set; }
         public string? AuctionItemName { get; set; }
-        public TimeOnly? AuctionStartTime { get; set; }
-        public TimeOnly? AuctionEndTime { get; set; }
+        public TimeSpan? AuctionStartTime { get; set; }
+        public TimeSpan? AuctionEndTime { get; set; }
         public int? StartingBid {  get; set; }
         public int? EndingBid { get; set; }
         public bool? Status { get; set; }

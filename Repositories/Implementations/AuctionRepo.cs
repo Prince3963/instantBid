@@ -1,6 +1,8 @@
 ﻿using instantBid.DBContext;
+using instantBid.DTOs;
 using instantBid.Models;
 using instantBid.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace instantBid.Repositories.Implementations
 {
@@ -10,6 +12,24 @@ namespace instantBid.Repositories.Implementations
         public AuctionRepo(AppDbContext dbContext)
         {
             this.dbContext = dbContext;
+        }
+
+        public async Task<List<Auction>> GetAllAuctions()
+        {
+            var result = await dbContext.Auctions
+                .Include(a => a.User)
+                .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<Auction?> GetAuctionById(int id)
+        {
+            var result = await dbContext.Auctions
+                .Include (a => a.User)
+                .FirstOrDefaultAsync(a => a.AuctionId == id);
+
+            return result;
         }
 
         public async Task<Auction> insertAuction(Auction auction)
@@ -30,5 +50,8 @@ namespace instantBid.Repositories.Implementations
                 Console.WriteLine("Aucton Repo complete ");
             }
         }
+
+
+
     }
 }
