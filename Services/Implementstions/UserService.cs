@@ -128,13 +128,11 @@ namespace instantBid.Services.Implementstions
             };
         }
         public async Task<ServiceResponses<string>> updateProfile(ProfileDTO profileDTO, int id)
-
         {
             var resposnse = new ServiceResponses<string>();
             var imageURL = await cloudinaryService.uploadImages(profileDTO.ProfileImage);
             Console.WriteLine("img: " + imageURL);
 
-            Console.WriteLine("Received file: " + profileDTO.ProfileImage?.FileName);
             try
             {
                 var updateUser = await userRepoInterface.getUserByID(id);
@@ -175,5 +173,6 @@ namespace instantBid.Services.Implementstions
                 return resposnse;
             }
         }
+
     }
 }

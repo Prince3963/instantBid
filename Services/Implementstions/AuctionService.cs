@@ -3,6 +3,7 @@ using instantBid.HelperServices;
 using instantBid.Models;
 using instantBid.Repositories.Interfaces;
 using instantBid.Services.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace instantBid.Services.Implementstions
 {
@@ -23,7 +24,7 @@ namespace instantBid.Services.Implementstions
                 AuctionStartTime = auctionDTO.AuctionStartTime?.TimeOfDay,
                 AuctionEndTime = auctionDTO.AuctionEndTime?.TimeOfDay,
                 StartingBid = auctionDTO.StartingBid,
-                EndingBid = auctionDTO.EndingBid,
+                EndingBid = auctionDTO.CurrentBid,
                 CreatedAt = auctionDTO.CreatedAt ?? DateTime.Now,
                 Status = auctionDTO.Status ?? true,
                 UserId = auctionDTO.UserId,
@@ -39,14 +40,14 @@ namespace instantBid.Services.Implementstions
         }
 
 
-        public async Task<ServiceResponses<List<Auction>>> GetAllAuctions()
+        public async Task<ServiceResponses<List<AuctionDTO>>> GetAllAuctions()
         {
-            var response = new ServiceResponses<List<Auction>>();
+            var response = new ServiceResponses<List<AuctionDTO>>();
             try
             {
                 var auction = await auctionRepo.GetAllAuctions();
 
-                if (auction == null)
+                if (auction == null || auction.Count == 0)
                 {
                     response.data = null;
                     response.message = "Auction is not available";
@@ -55,8 +56,24 @@ namespace instantBid.Services.Implementstions
                     return response;
                 }
 
-                response.data = auction;
-                response.message = "Auction is available";
+                var result = auction.Select(a => new AuctionDTO
+                {
+                    AuctionItemName = a.AuctionItemName,
+                    AuctionStartTime = a.AuctionStartTime.HasValue && a.CreatedAt.HasValue
+        ? a.CreatedAt.Value.Date.Add(a.AuctionStartTime.Value)
+        : (DateTime?)null,
+                    AuctionEndTime = a.AuctionEndTime.HasValue && a.CreatedAt.HasValue
+        ? a.CreatedAt.Value.Date.Add(a.AuctionEndTime.Value)
+        : (DateTime?)null,
+                    StartingBid = a.StartingBid,
+                    CurrentBid = a.EndingBid,
+                    Status = a.Status,
+                    CreatedAt = a.CreatedAt,
+                    //UserId = a.UserId
+                }).ToList();
+
+                response.data = result;
+                response.message = "Auctions are available";
                 response.status = true;
 
                 return response;
@@ -74,10 +91,11 @@ namespace instantBid.Services.Implementstions
         public async Task<ServiceResponses<Auction>> GetAuctionById(int id)
         {
             var response = new ServiceResponses<Auction>();
-           
+
             try
             {
-                var auctionById = await auctionRepo.GetAuctionById(id); 
+                var auctionById = await auctionRepo.GetAuctionById(id);
+
                 if (auctionById == null)
                 {
                     response.data = null;
