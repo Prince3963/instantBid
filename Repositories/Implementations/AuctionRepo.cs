@@ -17,6 +17,8 @@ namespace instantBid.Repositories.Implementations
         public async Task<List<Auction>> GetAllAuctions()
         {
             var result = await dbContext.Auctions
+                .Include(u => u.User)
+                .Include(i=> i.Items)
                 .ToListAsync();
 
             return result;
@@ -25,7 +27,7 @@ namespace instantBid.Repositories.Implementations
         public async Task<Auction?> GetAuctionById(int id)
         {
             var result = await dbContext.Auctions
-                .Include (a => a.User)
+                .Include(a => a.User)
                 .FirstOrDefaultAsync(a => a.UserId == id);
 
             return result;

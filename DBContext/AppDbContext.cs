@@ -13,6 +13,8 @@ namespace instantBid.DBContext
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Auction> Auctions { get; set; }
+        public DbSet<Items> Items { get; set; }
+
 
 
         //Data seeding 

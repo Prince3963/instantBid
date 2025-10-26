@@ -60,6 +60,8 @@ builder.Services.AddScoped<JWTTokenService>();
 builder.Services.AddScoped<IAuctionRepoInterface, AuctionRepo>();
 builder.Services.AddScoped<IauctionServiceInterface, AuctionService>();
 builder.Services.AddScoped<CloudinaryService>();
+builder.Services.AddScoped<IItemRepoInterface, ItemRepo>();
+builder.Services.AddScoped<IItemServiceInterface, ItemServices>();
 
 
 //CROS Solution

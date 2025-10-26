@@ -27,6 +27,7 @@ namespace instantBid.Models
         public Role? Role { get; set; }
 
 
-        public ICollection<Auction> Auctions { get; set; }
+        public ICollection<Auction>? Auctions { get; set; }
+        public ICollection<Items>? Items  { get; set; }
     }
 }

@@ -78,6 +78,12 @@ namespace instantBid.Migrations
                     b.Property<int?>("EndingBid")
                         .HasColumnType("int");
 
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ItemsItemId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("StartingBid")
                         .HasColumnType("int");
 
@@ -89,9 +95,44 @@ namespace instantBid.Migrations
 
                     b.HasKey("AuctionId");
 
+                    b.HasIndex("ItemsItemId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Auctions");
+                });
+
+            modelBuilder.Entity("instantBid.Models.Items", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemId"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ItemDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ItemImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ItemName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ItemId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("instantBid.Models.User", b =>
@@ -153,8 +194,25 @@ namespace instantBid.Migrations
 
             modelBuilder.Entity("instantBid.Models.Auction", b =>
                 {
+                    b.HasOne("instantBid.Models.Items", "Items")
+                        .WithMany("Auctions")
+                        .HasForeignKey("ItemsItemId");
+
                     b.HasOne("instantBid.Models.User", "User")
                         .WithMany("Auctions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Items");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("instantBid.Models.Items", b =>
+                {
+                    b.HasOne("instantBid.Models.User", "User")
+                        .WithMany("Items")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -178,9 +236,16 @@ namespace instantBid.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("instantBid.Models.Items", b =>
+                {
+                    b.Navigation("Auctions");
+                });
+
             modelBuilder.Entity("instantBid.Models.User", b =>
                 {
                     b.Navigation("Auctions");
+
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

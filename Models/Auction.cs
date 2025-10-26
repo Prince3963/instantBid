@@ -17,7 +17,17 @@ namespace instantBid.Models
         public bool? Status { get; set; }
         public DateTime? CreatedAt { get; set; }
 
+        //Item
+
+        public int ItemId { get; set; }
+
+        [ForeignKey("ItemId")]
+        public Items? Items { get; set; }
+
+        //User
         public int UserId {  get; set; }
+
+        [ForeignKey("UserId")]
         public User? User { get; set; }
     }
 }
