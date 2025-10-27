@@ -13,6 +13,9 @@ namespace instantBid.Models
         public TimeSpan? AuctionStartTime { get; set; }
         public TimeSpan? AuctionEndTime { get; set; }
         public int? StartingBid {  get; set; }
+
+
+        //EndingBid Consider As a CurrentBid
         public int? EndingBid { get; set; }
         public bool? Status { get; set; }
         public DateTime? CreatedAt { get; set; }
