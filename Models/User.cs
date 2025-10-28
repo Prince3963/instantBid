@@ -28,6 +28,7 @@ namespace instantBid.Models
 
 
         public ICollection<Auction>? Auctions { get; set; }
+        public ICollection<BidHistory>? BidHistories { get; set; }
         public ICollection<Items>? Items  { get; set; }
     }
 }

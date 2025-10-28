@@ -14,6 +14,7 @@ namespace instantBid.DBContext
         public DbSet<User> Users { get; set; }
         public DbSet<Auction> Auctions { get; set; }
         public DbSet<Items> Items { get; set; }
+        public DbSet<BidHistory> BidHistories { get; set; }
 
 
 
@@ -29,6 +30,34 @@ namespace instantBid.DBContext
                 new Role { RoleId = 2, RoleName = "Bidder" },
                 new Role { RoleId = 3, RoleName = "Seller" }
             );
+
+
+            modelBuilder.Entity<BidHistory>()
+        .HasOne(b => b.User)
+        .WithMany(u => u.BidHistories)
+        .HasForeignKey(b => b.UserId)
+        .OnDelete(DeleteBehavior.Restrict);  // ✅ prevent multiple cascade paths
+
+            // BidHistory → Auction (Cascade OK)
+            modelBuilder.Entity<BidHistory>()
+                .HasOne(b => b.Auction)
+                .WithMany()
+                .HasForeignKey(b => b.AuctionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Auction → User (Restrict)
+            modelBuilder.Entity<Auction>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.Auctions)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Items → User (Restrict)
+            modelBuilder.Entity<Items>()
+                .HasOne(i => i.User)
+                .WithMany(u => u.Items)
+                .HasForeignKey(i => i.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //Seed Admin Data
             modelBuilder.Entity<User>().HasData(

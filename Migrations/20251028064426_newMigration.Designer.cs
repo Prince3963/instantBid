@@ -12,8 +12,8 @@ using instantBid.DBContext;
 namespace instantBid.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251026061317_updateAuction")]
-    partial class updateAuction
+    [Migration("20251028064426_newMigration")]
+    partial class newMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,9 +84,6 @@ namespace instantBid.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ItemsItemId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("StartingBid")
                         .HasColumnType("int");
 
@@ -98,11 +95,40 @@ namespace instantBid.Migrations
 
                     b.HasKey("AuctionId");
 
-                    b.HasIndex("ItemsItemId");
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Auctions");
+                });
+
+            modelBuilder.Entity("instantBid.Models.BidHistory", b =>
+                {
+                    b.Property<int>("BidId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BidId"));
+
+                    b.Property<int>("AuctionId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("BidAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("BidTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BidId");
+
+                    b.HasIndex("AuctionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BidHistories");
                 });
 
             modelBuilder.Entity("instantBid.Models.Items", b =>
@@ -199,15 +225,36 @@ namespace instantBid.Migrations
                 {
                     b.HasOne("instantBid.Models.Items", "Items")
                         .WithMany("Auctions")
-                        .HasForeignKey("ItemsItemId");
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("instantBid.Models.User", "User")
                         .WithMany("Auctions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Items");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("instantBid.Models.BidHistory", b =>
+                {
+                    b.HasOne("instantBid.Models.Auction", "Auction")
+                        .WithMany()
+                        .HasForeignKey("AuctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("instantBid.Models.User", "User")
+                        .WithMany("BidHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Auction");
 
                     b.Navigation("User");
                 });
@@ -217,7 +264,7 @@ namespace instantBid.Migrations
                     b.HasOne("instantBid.Models.User", "User")
                         .WithMany("Items")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -247,6 +294,8 @@ namespace instantBid.Migrations
             modelBuilder.Entity("instantBid.Models.User", b =>
                 {
                     b.Navigation("Auctions");
+
+                    b.Navigation("BidHistories");
 
                     b.Navigation("Items");
                 });

@@ -99,6 +99,35 @@ namespace instantBid.Migrations
                     b.ToTable("Auctions");
                 });
 
+            modelBuilder.Entity("instantBid.Models.BidHistory", b =>
+                {
+                    b.Property<int>("BidId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BidId"));
+
+                    b.Property<int>("AuctionId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("BidAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("BidTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BidId");
+
+                    b.HasIndex("AuctionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BidHistories");
+                });
+
             modelBuilder.Entity("instantBid.Models.Items", b =>
                 {
                     b.Property<int>("ItemId")
@@ -200,10 +229,29 @@ namespace instantBid.Migrations
                     b.HasOne("instantBid.Models.User", "User")
                         .WithMany("Auctions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Items");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("instantBid.Models.BidHistory", b =>
+                {
+                    b.HasOne("instantBid.Models.Auction", "Auction")
+                        .WithMany()
+                        .HasForeignKey("AuctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("instantBid.Models.User", "User")
+                        .WithMany("BidHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Auction");
 
                     b.Navigation("User");
                 });
@@ -213,7 +261,7 @@ namespace instantBid.Migrations
                     b.HasOne("instantBid.Models.User", "User")
                         .WithMany("Items")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -243,6 +291,8 @@ namespace instantBid.Migrations
             modelBuilder.Entity("instantBid.Models.User", b =>
                 {
                     b.Navigation("Auctions");
+
+                    b.Navigation("BidHistories");
 
                     b.Navigation("Items");
                 });
