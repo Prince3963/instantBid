@@ -1,4 +1,6 @@
-﻿using instantBid.DBContext;
+﻿using System.Security.Claims;
+using instantBid.DBContext;
+using instantBid.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,49 +8,87 @@ namespace instantBidBackend.Hubs
 {
     public class AuctionHub : Hub
     {
-        private readonly AppDbContext _db;
-        public AuctionHub(AppDbContext db)
+        private readonly AppDbContext dbContext;
+
+        public AuctionHub(AppDbContext dbContext)
         {
-            _db = db;
+            this.dbContext = dbContext;
         }
+
 
         public async Task JoinAuction(int auctionId)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"auction-{auctionId}");
+            try
+            {
+                Console.WriteLine($"✅ User joined auction: {auctionId}");
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"auction-{auctionId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ JoinAuction error: {ex.Message}");
+                throw;
+            }
         }
 
-        public async Task PlaceBid(int auctionId, decimal amount, string userName)
+        public override async Task OnConnectedAsync()
         {
-            var auction = await _db.Auctions.FirstOrDefaultAsync(a => a.AuctionId == auctionId);
+            var user = Context.User?.Identity?.Name ?? "Anonymous";
+            Console.WriteLine($"✅ New connection: {Context.ConnectionId}, User: {user}");
+            await base.OnConnectedAsync();
+        }
 
+
+        // ✅ Place bid
+        public async Task PlaceBid(int auctionId, decimal amount)
+        {
+            var userIdClaim = Context.User?.FindFirst("UserId")?.Value;
+            var userNameClaim = Context.User?.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                await Clients.Caller.SendAsync("BidRejected", "Unauthorized user");
+                return;
+            }
+
+            int userId = int.Parse(userIdClaim);
+            string userName = userNameClaim ?? "Unknown User";
+
+            var auction = await dbContext.Auctions.FirstOrDefaultAsync(a => a.AuctionId == auctionId);
             if (auction == null)
             {
                 await Clients.Caller.SendAsync("BidRejected", "Auction not found");
                 return;
             }
 
-            // ✅ Get current server time in TimeSpan (for model compatibility)
+            // ✅ Auction validation
             var currentTime = DateTime.Now.TimeOfDay;
-
-            // ✅ Auction end time check
             if (auction.AuctionEndTime.HasValue && auction.AuctionEndTime.Value <= currentTime)
             {
                 await Clients.Caller.SendAsync("BidRejected", "Auction ended");
                 return;
             }
 
-            // ✅ Check if bid is lower than current
             if (auction.EndingBid.HasValue && amount <= auction.EndingBid.Value)
             {
                 await Clients.Caller.SendAsync("BidRejected", "Bid too low");
                 return;
             }
 
-            // ✅ Update current bid
+            // ✅ Update bid
             auction.EndingBid = (int)amount;
-            await _db.SaveChangesAsync();
 
-            // ✅ Notify all users in that auction room
+            // ✅ Save BidHistory
+            dbContext.BidHistories.Add(new BidHistory
+            {
+                AuctionId = auctionId,
+                UserId = userId,
+                BidAmount = amount,
+                BidTime = DateTime.Now
+            });
+
+            await dbContext.SaveChangesAsync();
+
+            // ✅ Notify group
             await Clients.Group($"auction-{auctionId}")
                 .SendAsync("BidPlaced", new
                 {
@@ -56,6 +96,25 @@ namespace instantBidBackend.Hubs
                     Amount = amount,
                     User = userName
                 });
+        }
+
+
+        // ✅ Get Bid History for auction (frontend me call kar sakte ho)
+        public async Task GetBidHistory(int auctionId)
+        {
+            var history = await dbContext.BidHistories
+                .Include(b => b.User)
+                .Where(b => b.AuctionId == auctionId)
+                .OrderByDescending(b => b.BidTime)
+                .Select(b => new
+                {
+                    b.BidAmount,
+                    b.BidTime,
+                    UserName = b.User.Name
+                })
+                .ToListAsync();
+
+            await Clients.Caller.SendAsync("ReceiveBidHistory", history);
         }
     }
 }

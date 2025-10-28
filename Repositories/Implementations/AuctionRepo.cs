@@ -27,8 +27,8 @@ namespace instantBid.Repositories.Implementations
         public async Task<Auction?> GetAuctionById(int id)
         {
             var result = await dbContext.Auctions
-                .Include(a => a.User)
-                .FirstOrDefaultAsync(a => a.UserId == id);
+                .Include(a => a.Items)
+                .FirstOrDefaultAsync(a => a.AuctionId == id);
 
             return result;
         }
