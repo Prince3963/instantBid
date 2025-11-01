@@ -104,6 +104,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Middleware pipeline (ORDER IS VERY IMPORTANT)
+app.UseHttpsRedirection(); 
 app.UseRouting();
 app.UseCors("frontend");
 app.UseAuthentication();
@@ -112,7 +113,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<AuctionHub>("/auctionHub");
 
-app.UseHttpsRedirection(); // optional, move to bottom for dev
 
 
 app.Run();

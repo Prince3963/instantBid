@@ -18,15 +18,11 @@ namespace instantBidBackend.Hubs
 
         public async Task JoinAuction(int auctionId)
         {
-            try
+            var userId = Context.User?.FindFirst("UserId")?.Value; // JWT se aayega
+            if (userId != null)
             {
-                Console.WriteLine($"✅ User joined auction: {auctionId}");
-                await Groups.AddToGroupAsync(Context.ConnectionId, $"auction-{auctionId}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"❌ JoinAuction error: {ex.Message}");
-                throw;
+                await Groups.AddToGroupAsync(Context.ConnectionId, auctionId.ToString());
+                Console.WriteLine($"? User joined auction: {auctionId}, User: {userId}");
             }
         }
 

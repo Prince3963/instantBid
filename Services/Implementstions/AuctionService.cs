@@ -85,7 +85,7 @@ namespace instantBid.Services.Implementstions
 
                 if (auctions == null || auctions.Count == 0)
                 {
-                    response.data = null;
+                    response.data = new List<AuctionDTO>(); // Ensure it is an empty list, not null
                     response.message = "No auctions available";
                     response.status = false;
                     return response;
@@ -93,6 +93,7 @@ namespace instantBid.Services.Implementstions
 
                 var result = auctions.Select(a => new AuctionDTO
                 {
+                    AuctionId = a.AuctionId,
                     ItemName = a.Items?.ItemName,
                     ItemDescription = a.Items?.ItemDescription,
                     ItemImageURL = a.Items?.ItemImage,
@@ -123,6 +124,7 @@ namespace instantBid.Services.Implementstions
                 return response;
             }
         }
+
 
         public async Task<ServiceResponses<Auction>> GetAuctionById(int id)
         {

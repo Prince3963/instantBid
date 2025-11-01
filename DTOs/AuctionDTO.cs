@@ -2,11 +2,13 @@
 {
     public class AuctionDTO
     {
+        public int AuctionId { get; set; } // Added
 
         public string? ItemName { get; set; }
         public string? ItemDescription { get; set; }
         public IFormFile? ItemImage { get; set; }
         public string? ItemImageURL { get; set; }
+
         public string? AuctionItemName { get; set; }
         public DateTime? AuctionStartTime { get; set; }
         public DateTime? AuctionEndTime { get; set; }
