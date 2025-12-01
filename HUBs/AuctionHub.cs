@@ -15,13 +15,14 @@ namespace instantBidBackend.Hubs
             this.dbContext = dbContext;
         }
 
-
+        // ✅ Join auction group
         public async Task JoinAuction(int auctionId)
         {
             var userId = Context.User?.FindFirst("UserId")?.Value; // JWT se aayega
             if (userId != null)
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, auctionId.ToString());
+                var groupName = $"auction-{auctionId}";
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
                 Console.WriteLine($"? User joined auction: {auctionId}, User: {userId}");
             }
         }
@@ -32,7 +33,6 @@ namespace instantBidBackend.Hubs
             Console.WriteLine($"✅ New connection: {Context.ConnectionId}, User: {user}");
             await base.OnConnectedAsync();
         }
-
 
         // ✅ Place bid
         public async Task PlaceBid(int auctionId, decimal amount)
@@ -85,7 +85,8 @@ namespace instantBidBackend.Hubs
             await dbContext.SaveChangesAsync();
 
             // ✅ Notify group
-            await Clients.Group($"auction-{auctionId}")
+            var groupName = $"auction-{auctionId}";
+            await Clients.Group(groupName)
                 .SendAsync("BidPlaced", new
                 {
                     AuctionId = auctionId,
@@ -94,8 +95,7 @@ namespace instantBidBackend.Hubs
                 });
         }
 
-
-        // ✅ Get Bid History for auction (frontend me call kar sakte ho)
+        // ✅ Get bid history
         public async Task GetBidHistory(int auctionId)
         {
             var history = await dbContext.BidHistories

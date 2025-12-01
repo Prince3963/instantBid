@@ -104,7 +104,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Middleware pipeline (ORDER IS VERY IMPORTANT)
-app.UseHttpsRedirection(); 
+app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("frontend");
 app.UseAuthentication();
