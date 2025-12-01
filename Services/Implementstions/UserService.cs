@@ -125,6 +125,7 @@ namespace instantBid.Services.Implementstions
                 AccountBalance = existUser.AccountBalance,
                 Address = existUser.Address,
                 DateOfBirth = existUser.DateOfBirth,
+                ProfileImageRead = existUser.ProfileImage
             };
         }
         public async Task<ServiceResponses<string>> updateProfile(ProfileDTO profileDTO, int id)
