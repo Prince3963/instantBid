@@ -3,6 +3,7 @@ using instantBid.DTOs;
 using instantBid.Models;
 using instantBid.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace instantBid.Repositories.Implementations
 {
@@ -52,7 +53,22 @@ namespace instantBid.Repositories.Implementations
             }
         }
 
+        public async Task<List<Auction>> searchAuction(string auction)
+        {
+            if (string.IsNullOrWhiteSpace(auction))
+            {
+                return new List<Auction>();
+            }
 
+            auction = auction.ToLower();
 
+            var result = await dbContext.Auctions
+                .Include(i => i.Items)
+                .Where(a => a.AuctionItemName != null && a.AuctionItemName!.ToLower().Contains(auction) ||
+                            a.Items != null && a.Items.ItemName != null && a.Items!.ItemName!.ToLower().Contains(auction))
+                .ToListAsync();
+
+            return result;
+        }
     }
 }

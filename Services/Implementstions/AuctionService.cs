@@ -156,5 +156,52 @@ namespace instantBid.Services.Implementstions
                 return response;
             }
         }
+
+        public async Task<ServiceResponses<List<AuctionDTO>>> searchAuction(string auction)
+        {
+            var response = new ServiceResponses<List<AuctionDTO>>();
+            try
+            {
+                var auctions = await auctionRepo.searchAuction(auction);
+                if (auctions == null || auctions.Count == 0 )
+                {
+                    response.data = new List<AuctionDTO>();
+                    response.message = "Auction not available";
+                    response.status = false;
+
+                    return response;
+                }
+                var result = auctions.Select(a => new AuctionDTO
+                {
+                    AuctionId = a.AuctionId,
+                    ItemName = a.Items?.ItemName,
+                    ItemDescription = a.Items?.ItemDescription,
+                    ItemImageURL = a.Items?.ItemImage,
+                    AuctionItemName = a.AuctionItemName,
+                    AuctionStartTime = a.AuctionStartTime.HasValue && a.CreatedAt.HasValue
+                        ? a.CreatedAt.Value.Date.Add(a.AuctionStartTime.Value)
+                        : (DateTime?)null,
+                    AuctionEndTime = a.AuctionEndTime.HasValue && a.CreatedAt.HasValue
+                        ? a.CreatedAt.Value.Date.Add(a.AuctionEndTime.Value)
+                        : (DateTime?)null,
+                    StartingBid = a.StartingBid,
+                    CurrentBid = a.EndingBid,
+                    Status = a.Status,
+                    CreatedAt = a.CreatedAt
+                }).ToList();
+
+                response.data = result;
+                response.message = "Auction searched";
+                response.status = true;
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.data = null;
+                response.message = "Check Auction Service " + ex.Message;
+                response.status = false;
+                return response;
+            }
+        }
     }
 }

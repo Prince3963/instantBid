@@ -8,6 +8,6 @@ namespace instantBid.Repositories.Interfaces
         Task<Auction> insertAuction(Auction auction);
         Task<List<Auction>> GetAllAuctions();
         Task<Auction?> GetAuctionById(int id);
-
+        Task<List<Auction>> searchAuction(string auction);
     }
 }

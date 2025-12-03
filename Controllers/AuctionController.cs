@@ -3,6 +3,7 @@ using instantBid.HelperServices;
 using instantBid.Services.Implementstions;
 using instantBid.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace instantBid.Controllers
@@ -36,6 +37,17 @@ namespace instantBid.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("/search")]
+        public async Task<IActionResult> searchAuction(string auction)
+        {
+            if (auction == null)
+            {
+                return NotFound("This Item not found for an auction");
+            }
+            var result = await auctionService.searchAuction(auction);
+            return Ok(result);
+        }
 
         [HttpGet]
         [Route("/getAuctions")]
