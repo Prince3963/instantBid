@@ -56,7 +56,7 @@ namespace instantBidBackend.Hubs
                 return;
             }
 
-            // ✅ Auction validation
+            // Auction time check
             var currentTime = DateTime.Now.TimeOfDay;
             if (auction.AuctionEndTime.HasValue && auction.AuctionEndTime.Value <= currentTime)
             {
@@ -70,10 +70,10 @@ namespace instantBidBackend.Hubs
                 return;
             }
 
-            // ✅ Update bid
+            // Update Ending Bid
             auction.EndingBid = (int)amount;
 
-            // ✅ Save BidHistory
+            // Save Bid History
             dbContext.BidHistories.Add(new BidHistory
             {
                 AuctionId = auctionId,
@@ -84,16 +84,17 @@ namespace instantBidBackend.Hubs
 
             await dbContext.SaveChangesAsync();
 
-            // ✅ Notify group
+            // Notify all users in group
             var groupName = $"auction-{auctionId}";
             await Clients.Group(groupName)
                 .SendAsync("BidPlaced", new
                 {
                     AuctionId = auctionId,
                     Amount = amount,
-                    User = userName
+                    User = userId
                 });
         }
+
 
         // ✅ Get bid history
         public async Task GetBidHistory(int auctionId)

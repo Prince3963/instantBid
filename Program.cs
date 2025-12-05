@@ -86,7 +86,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("frontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins(
+            "http://localhost:5173",
+            "https://localhost:5173",
+            "https://localhost:7119",
+            "http://localhost:7119")
       .AllowAnyHeader()
       .AllowAnyMethod()
       .AllowCredentials();
@@ -109,10 +113,6 @@ app.UseRouting();
 app.UseCors("frontend");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 app.MapHub<AuctionHub>("/auctionHub");
-
-
-
 app.Run();

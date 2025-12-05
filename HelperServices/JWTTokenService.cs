@@ -23,6 +23,7 @@ namespace instantBid.HelperServices
             var claims = new[]
             {
                 new Claim("UserId", user.UserId.ToString()),
+                new Claim(ClaimTypes.Name, user.Name),
                 new Claim("Email", user.Email)
             };
 
