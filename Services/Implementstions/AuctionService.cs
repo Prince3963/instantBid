@@ -157,6 +157,36 @@ namespace instantBid.Services.Implementstions
             }
         }
 
+        public async Task<ServiceResponses<CurrentBidDTO?>> getCurrentBidByAuctionId(int id)
+        {
+            var response = new ServiceResponses<CurrentBidDTO>();
+            try
+            {
+                var auction = await auctionRepo.getAuctionByIDAndCurrentBid(id);
+                var currentBid = new CurrentBidDTO
+                {
+                    AuctionId = auction.AuctionId,
+                    AuctionItemName = auction.AuctionItemName,
+                    EndingBid = auction.EndingBid,
+                };
+
+                response.data = currentBid;
+                response.message = "Auction Current Bid is";
+                response.status = true;
+
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.data=null;
+                response.message = "Please check your services";
+                response.status = false;
+
+                return response;
+            }
+
+        }
+
         public async Task<ServiceResponses<List<AuctionDTO>>> searchAuction(string auction)
         {
             var response = new ServiceResponses<List<AuctionDTO>>();

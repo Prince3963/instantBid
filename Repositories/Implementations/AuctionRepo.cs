@@ -2,6 +2,7 @@
 using instantBid.DTOs;
 using instantBid.Models;
 using instantBid.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,6 +32,12 @@ namespace instantBid.Repositories.Implementations
                 .Include(a => a.Items)
                 .FirstOrDefaultAsync(a => a.AuctionId == id);
 
+            return result;
+        }
+
+        public async Task<Auction?> getAuctionByIDAndCurrentBid(int id)
+        {
+            var result = await dbContext.Auctions.FirstOrDefaultAsync(e => e.AuctionId == id);
             return result;
         }
 

@@ -9,5 +9,6 @@ namespace instantBid.Repositories.Interfaces
         Task<List<Auction>> GetAllAuctions();
         Task<Auction?> GetAuctionById(int id);
         Task<List<Auction>> searchAuction(string auction);
+        Task<Auction?> getAuctionByIDAndCurrentBid(int id);
     }
 }

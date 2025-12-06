@@ -69,5 +69,18 @@ namespace instantBid.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet]
+        [Route("/CurrentBidOfAuction")]
+        public async Task<IActionResult> getCurrentBid(int id)
+        {
+            var result = await auctionService.getCurrentBidByAuctionId(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
     }
 }
