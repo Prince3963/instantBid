@@ -91,7 +91,7 @@ namespace instantBidBackend.Hubs
                 {
                     AuctionId = auctionId,
                     Amount = amount,
-                    User = userId
+                    User = userName
                 });
         }
 

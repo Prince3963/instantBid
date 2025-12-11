@@ -36,7 +36,7 @@ namespace instantBid.DBContext
         .HasOne(b => b.User)
         .WithMany(u => u.BidHistories)
         .HasForeignKey(b => b.UserId)
-        .OnDelete(DeleteBehavior.Restrict);  // ✅ prevent multiple cascade paths
+        .OnDelete(DeleteBehavior.Restrict);  //  prevent multiple cascade paths
 
             // BidHistory → Auction (Cascade OK)
             modelBuilder.Entity<BidHistory>()

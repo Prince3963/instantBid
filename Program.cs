@@ -80,6 +80,8 @@ builder.Services.AddScoped<IauctionServiceInterface, AuctionService>();
 builder.Services.AddScoped<CloudinaryService>();
 builder.Services.AddScoped<IItemRepoInterface, ItemRepo>();
 builder.Services.AddScoped<IItemServiceInterface, ItemServices>();
+builder.Services.AddScoped<IBidRepoInterface, BidRepo>();
+builder.Services.AddScoped<IBidServiceInterface,BidServices>();
 
 // CORS Policy
 builder.Services.AddCors(options =>
