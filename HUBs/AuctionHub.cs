@@ -74,14 +74,15 @@ namespace instantBidBackend.Hubs
             auction.EndingBid = (int)amount;
 
             // Save Bid History
-            dbContext.BidHistories.Add(new BidHistory
+            var bidHistory = new BidHistory
             {
                 AuctionId = auctionId,
                 UserId = userId,
                 BidAmount = amount,
                 BidTime = DateTime.Now
-            });
+            };
 
+            dbContext.BidHistories.Add(bidHistory);
             await dbContext.SaveChangesAsync();
 
             // Notify all users in group
@@ -91,7 +92,8 @@ namespace instantBidBackend.Hubs
                 {
                     AuctionId = auctionId,
                     Amount = amount,
-                    User = userName
+                    User = userName,
+                    
                 });
         }
 

@@ -23,6 +23,13 @@ namespace instantBid.Repositories.Implementations
             return user;
         }
 
+        public async Task<User> getAdminUser(string email)
+        {
+            var existAdmin = await dbContext.Users.FirstOrDefaultAsync(
+                x => x.Email == email);
+            return existAdmin;
+        }
+
         public async Task<List<User>> getUser()
         {
             return await dbContext.Users.ToListAsync();
@@ -31,7 +38,7 @@ namespace instantBid.Repositories.Implementations
         public async Task<User> getUserByEmail(string email)
         {
             var existEmail = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
-            return (existEmail);
+            return existEmail;
         }
 
         public async Task<User> getUserByID(int id)

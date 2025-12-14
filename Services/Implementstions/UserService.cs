@@ -81,6 +81,47 @@ namespace instantBid.Services.Implementstions
             return response;
         }
 
+        public  async Task<ServiceResponses<string>> getAdmin(AdminDTO adminDTO)
+        {
+            var response = new ServiceResponses<string>();
+            try
+            {
+                var existAdmin = await userRepoInterface.getAdminUser(adminDTO.Email);
+                if (existAdmin == null)
+                {
+                    response.data = "0";
+                    response.message = "Admin not found";
+                    response.status = false;
+
+                    return response;
+                }
+
+                //Check Password
+                if (existAdmin.Password != adminDTO.Password)
+                {
+                    response.data = "0";
+                    response.message = "Admin Password is not correct";
+                    response.status = false;
+                    return response;
+                }
+
+
+                response.data = existAdmin.Email.ToString();
+                response.message = "Admin Login successFully";
+                response.status = true;
+
+                return response;
+
+            }catch (Exception ex)
+            {
+                response.data = "0";
+                response.message = ex.ToString();
+                response.status = false;
+
+                return response;
+            }
+        }
+
         public async Task<ServiceResponses<string>> registerUser(RegistrationDTO registrationDTO)
         {
             var response = new ServiceResponses<string>();

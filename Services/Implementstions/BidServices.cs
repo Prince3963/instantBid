@@ -70,7 +70,7 @@ namespace instantBid.Services.Implementstions
                 var result = bids.Select(b => new BidHistoryDTO
                 {
                     //AuctionId = b.AuctionId,
-                    AuctionItemName = b.Auction.AuctionItemName,
+                    AuctionItemName = b.Auction?.AuctionItemName,
                     BidAmount = b.BidAmount,
                     BidTime = b.BidTime,
                     //CurrentBid= b.Auction?.EndingBid,
