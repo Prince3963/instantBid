@@ -75,6 +75,12 @@ namespace instantBid.Services.Implementstions
                 return null;
             }
 
+            if (existEmail.IsActive == false)
+            {
+                response.message = "Your account is deactivated. Contact admin.";
+                return null;
+            }
+
             response.data = new
             {
                 token = jWTTokenService.JWTServicesGenerator(existEmail),
@@ -184,7 +190,18 @@ namespace instantBid.Services.Implementstions
             var response = new ServiceResponses<List<User>>();
             try
             {
-                var result = await userRepoInterface.getAllUser();
+                var user = await userRepoInterface.getAllUser();
+
+                var result = user.Select(u => new User
+                {
+                    UserId = u.UserId,
+                    Name = u.Name,
+                    Email = u.Email,
+                    Address = u.Address,
+                    IsActive = u.IsActive,
+                    CreatedAt = u.CreatedAt,
+                    ProfileImage = u.ProfileImage
+                }).ToList();
                 
                 response.data = result;
                 response.message = "instantBid Users";
@@ -195,6 +212,41 @@ namespace instantBid.Services.Implementstions
             }catch  (Exception ex)
             {
                 response.data = null;
+                response.message = ex.ToString();
+                response.status = false;
+
+                return response;
+            }
+        }
+
+        public async Task<ServiceResponses<string>> updateUserStatus(int userId, bool isActive)
+        {
+            var response = new ServiceResponses<string>();
+            try
+            {
+                var existUser = await userRepoInterface.getUserByID(userId);
+                if (existUser == null)
+                {
+                    response.data = null;
+                    response.message = "User not found";
+                    response.status = false;
+
+                    return response;
+                }
+
+                existUser.IsActive = isActive;
+
+                await userRepoInterface.updateUserData(existUser);
+
+                response.status = true;
+                response.message = "User status chaged";
+                response.data = "1";
+
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.data = "0";
                 response.message = ex.ToString();
                 response.status = false;
 

@@ -23,7 +23,7 @@ namespace instantBid.Controllers
         [Route("GetUserById")]
         public async Task<IActionResult> getUserById()
         {
-            var userId = int.Parse(User.FindFirst("userId").Value ?? "0");
+            var userId = int.Parse(User?.FindFirst("userId").Value ?? "0");
             var result = await userService.getUserByID(userId);
             if (result == null)
             {
@@ -72,6 +72,14 @@ namespace instantBid.Controllers
                 Console.WriteLine("Successful");
             }
         }
+
+        [HttpPut("updateUserStatus")]
+        public async Task<IActionResult> UpdateUserStatus([FromQuery] int userId, [FromQuery] bool isActive)
+        {
+            var result = await userService.updateUserStatus(userId, isActive);
+            return Ok(result);
+        }
+
 
         [HttpPost]
         [Route("/Login")]

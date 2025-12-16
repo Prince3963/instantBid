@@ -233,5 +233,40 @@ namespace instantBid.Services.Implementstions
                 return response;
             }
         }
+
+        public async Task<ServiceResponses<string>> updateAuctionStatus(int auctioId, bool isActive)
+        {
+            var response = new ServiceResponses<string>();
+            try
+            {
+                var existAuction = await auctionRepo.GetAuctionById(auctioId);
+                if (existAuction == null)
+                {
+                    response.data = null;
+                    response.message = "Auction is not found";
+                    response.status = false;
+
+                    return response;
+                }
+
+                existAuction.Status = isActive;
+                await auctionRepo.updateAuctionStatus(existAuction);
+
+                response.data = "1";
+                response.message = "Auction Status Chenged";
+                response.status = true;
+
+                return response;
+
+            }
+            catch(Exception ex)
+            {
+                response.data = null;
+                response.message = "Status is not changed";
+                response.status = false;
+
+                return response;
+            }
+        }
     }
 }

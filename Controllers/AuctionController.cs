@@ -49,6 +49,14 @@ namespace instantBid.Controllers
             return Ok(result);
         }
 
+        [HttpPut]
+        [Route("/updateAuctionStatus")]
+        public async Task<IActionResult> updateAuctionStatus(int auctionId, bool isActive)
+        {
+            var result = await auctionService.updateAuctionStatus(auctionId, isActive);
+            return Ok(result);
+        }
+
         [HttpGet]
         [Route("/getAuctions")]
         public async Task<IActionResult> getAllAuction()

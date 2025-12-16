@@ -13,5 +13,6 @@ namespace instantBid.Services.Interfaces
         Task<List<RegistrationDTO>> userProfile();
         Task<ProfileDTO> getUserByID(int id);
         Task<ServiceResponses<string>> updateProfile(ProfileDTO profileDTO, int id);
+        Task<ServiceResponses<string>> updateUserStatus(int userId, bool isActive);
     }
 }

@@ -16,6 +16,7 @@ namespace instantBid.Controllers
         }
 
         [HttpGet]
+        [Route("/getAllBids")]
         public async Task<IActionResult> getAllBids()
         {
             var result = await bidServices.getAllBids();
@@ -23,7 +24,6 @@ namespace instantBid.Controllers
             {
                 return NotFound("Bids not available");
             }
-
             return Ok(result);
         }
 

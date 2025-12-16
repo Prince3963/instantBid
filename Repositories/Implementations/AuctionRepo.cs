@@ -77,5 +77,12 @@ namespace instantBid.Repositories.Implementations
 
             return result;
         }
+
+        public async Task updateAuctionStatus(Auction auction)
+        {
+            var result =  dbContext.Auctions.Update(auction);
+            await dbContext.SaveChangesAsync();
+
+        }
     }
 }

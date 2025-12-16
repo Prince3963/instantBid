@@ -17,6 +17,7 @@ namespace instantBid.Repositories.Implementations
             var result = await dbContext.BidHistories
                 .Include(b => b.User)
                 .Include(b => b.Auction)
+                .ThenInclude(i => i.Items)
                 .ToListAsync();
 
             return result;

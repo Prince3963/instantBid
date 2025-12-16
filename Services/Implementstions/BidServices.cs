@@ -12,6 +12,7 @@ namespace instantBid.Services.Implementstions
         {
             this.bidRepo = bidRepo;
         }
+
         public async Task<ServiceResponses<List<BidHistoryDTO>>> getAllBids()
         {
             var response = new ServiceResponses<List<BidHistoryDTO>>();
@@ -29,7 +30,9 @@ namespace instantBid.Services.Implementstions
                 var result = bids.Select(b => new BidHistoryDTO
                 {
                     AuctionId = b.AuctionId,
+                    UserId = b.UserId,
                     AuctionItemName = b.Auction?.AuctionItemName,
+                    ItemImage = b.Auction?.Items?.ItemImage,
                     Name = b.User?.Name,
                     BidAmount = b.BidAmount,
                     BidTime = b.BidTime,

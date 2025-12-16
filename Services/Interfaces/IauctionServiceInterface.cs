@@ -11,5 +11,6 @@ namespace instantBid.Services.Interfaces
         Task<ServiceResponses<Auction>> GetAuctionById(int id);
         Task<ServiceResponses<List<AuctionDTO>>> searchAuction(string auction);
         Task<ServiceResponses<CurrentBidDTO?>> getCurrentBidByAuctionId(int id);
+        Task<ServiceResponses<string>> updateAuctionStatus(int auctioId, bool isActive);
     }
 }
