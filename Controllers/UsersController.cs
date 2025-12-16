@@ -81,13 +81,13 @@ namespace instantBid.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        [Route("AdminLogin")]
-        public async Task<IActionResult> loginAdmin([FromForm] AdminDTO adminDTO)
-        {
-            var result = await userService.getAdmin(adminDTO);
-            return Ok(result);
-        }
+        //[HttpPost]
+        //[Route("AdminLogin")]
+        //public async Task<IActionResult> loginAdmin([FromForm] AdminDTO adminDTO)
+        //{
+        //    var result = await userService.getAdmin(adminDTO);
+        //    return Ok(result);
+        //}
 
         [HttpPatch]
         [Route("/updateUserData/{id}")]
