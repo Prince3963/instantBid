@@ -35,12 +35,12 @@ namespace instantBid.Controllers
 
         [HttpGet]
         [Route("getAllUsers")]
-        public async Task<IActionResult> getAllUser([FromQuery] RegistrationDTO userDTO)
+        public async Task<IActionResult> getAllUser()
         {
             var response = new ServiceResponses<string>();
             try
             {
-                var result = await userService.getUsers(userDTO);
+                var result = await userService.getAllUser();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -80,14 +80,6 @@ namespace instantBid.Controllers
             var result = await userService.loginUser(loginDTO);
             return Ok(result);
         }
-
-        //[HttpPost]
-        //[Route("AdminLogin")]
-        //public async Task<IActionResult> loginAdmin([FromForm] AdminDTO adminDTO)
-        //{
-        //    var result = await userService.getAdmin(adminDTO);
-        //    return Ok(result);
-        //}
 
         [HttpPatch]
         [Route("/updateUserData/{id}")]

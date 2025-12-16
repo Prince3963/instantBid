@@ -90,5 +90,49 @@ namespace instantBid.Services.Implementstions
                 return response;
             }
         }
+
+        public async Task<ServiceResponses<List<BidHistoryDTO>>> getBidByUser(int id)
+        {
+            var response = new ServiceResponses<List<BidHistoryDTO>>();
+            try
+            {
+                var existUser = await bidRepo.getBidsByUser(id);
+                if (!existUser.Any())
+                {
+                    response.data = new List<BidHistoryDTO>();
+                    response.message = "User have no bid history";
+                    response.status = true;
+                    return response;
+                }
+
+                var result = existUser.Select(b => new BidHistoryDTO
+                {
+                    AuctionId = b.AuctionId,
+                    AuctionItemName = b.Auction?.AuctionItemName,
+                    CurrentBid = b.Auction?.EndingBid,
+                    ItemImage = b.Auction?.Items?.ItemImage,
+
+                    UserId = b.UserId,
+                    Name = b.User?.Name,
+
+                    BidAmount = b.BidAmount,
+                    BidTime = b.BidTime
+                }).ToList();
+
+                response.data = result;
+                response.message = "Users bid";
+                response.status = true;
+
+                return response;
+
+            }
+            catch(Exception ex)
+            {
+                response.data = null;
+                response.message = ex.ToString();
+                response.status = false;
+                return response;
+            }
+        }
     }
 }

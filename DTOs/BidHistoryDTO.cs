@@ -6,6 +6,8 @@
         public int AuctionId { get; set; }
         public string? AuctionItemName { get; set; }
         public int? CurrentBid { get; set; }
+        public string? ItemImage { get; set; }
+
 
         //User Infromation
         public int UserId { get; set; }

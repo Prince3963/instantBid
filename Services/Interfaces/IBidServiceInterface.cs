@@ -7,5 +7,6 @@ namespace instantBid.Services.Interfaces
     {
         Task<ServiceResponses<List<BidHistoryDTO>>> getAllBids();
         Task<ServiceResponses<List<BidHistoryDTO>>> getBidByAuctionId(int id);
+        Task<ServiceResponses<List<BidHistoryDTO>>> getBidByUser (int id);
     }
 }

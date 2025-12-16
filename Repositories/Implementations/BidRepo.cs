@@ -32,5 +32,18 @@ namespace instantBid.Repositories.Implementations
 
             return result;
         }
+
+        public async Task<List<BidHistory>> getBidsByUser(int id)
+        {
+            var result = await dbContext.BidHistories
+                .Where(b => b.UserId == id)
+                .Include(b => b.User)
+                .Include(b => b.Auction)
+                .ThenInclude(a => a.Items)
+
+                .ToListAsync();
+
+            return result;
+        }
     }
 }

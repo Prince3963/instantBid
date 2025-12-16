@@ -30,6 +30,12 @@ namespace instantBid.Repositories.Implementations
             return existAdmin;
         }
 
+        public async Task<List<User>> getAllUser()
+        {
+            var result = await dbContext.Users.ToListAsync();
+            return result;
+        }
+
         public async Task<List<User>> getUser()
         {
             return await dbContext.Users.ToListAsync();

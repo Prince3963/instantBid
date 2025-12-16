@@ -38,5 +38,17 @@ namespace instantBid.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet]
+        [Route("/getBidByUser")]
+        public async Task<IActionResult> getBidByUser([FromQuery] int id)
+        {
+            var result = await bidServices.getBidByUser(id);
+            if (result == null)
+            {
+                return NotFound("User have no bid history");
+            }
+            return Ok(result);
+        }
     }
 }

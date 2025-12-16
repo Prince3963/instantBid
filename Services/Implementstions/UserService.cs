@@ -179,5 +179,27 @@ namespace instantBid.Services.Implementstions
             }
         }
 
+        public async Task<ServiceResponses<List<User>>> getAllUser()
+        {
+            var response = new ServiceResponses<List<User>>();
+            try
+            {
+                var result = await userRepoInterface.getAllUser();
+                
+                response.data = result;
+                response.message = "instantBid Users";
+                response.status = true;
+
+                return response;
+
+            }catch  (Exception ex)
+            {
+                response.data = null;
+                response.message = ex.ToString();
+                response.status = false;
+
+                return response;
+            }
+        }
     }
 }
