@@ -16,11 +16,22 @@ namespace instantBid.Repositories.Implementations
             this.dbContext = dbContext;
         }
 
+        public async Task<Auction?> AnnounceWinner(int auctionId)
+        {
+            var result = await dbContext.Auctions
+                .Include(a => a.User)
+                .Include(a => a.WinnerUser)
+                .Include(a => a.Items)
+                .FirstOrDefaultAsync(a => a.AuctionId == auctionId);
+            await dbContext.SaveChangesAsync();
+            return result;
+        }
+
         public async Task<List<Auction>> GetAllAuctions()
         {
             var result = await dbContext.Auctions
                 .Include(u => u.User)
-                .Include(i=> i.Items)
+                .Include(i => i.Items)
                 .ToListAsync();
 
             return result;
@@ -80,7 +91,7 @@ namespace instantBid.Repositories.Implementations
 
         public async Task updateAuctionStatus(Auction auction)
         {
-            var result =  dbContext.Auctions.Update(auction);
+            var result = dbContext.Auctions.Update(auction);
             await dbContext.SaveChangesAsync();
 
         }

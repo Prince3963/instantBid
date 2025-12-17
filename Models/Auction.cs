@@ -32,5 +32,13 @@ namespace instantBid.Models
 
         [ForeignKey("UserId")]
         public User? User { get; set; }
+
+
+
+        public int? WinnerUserId { get; set; }
+        public decimal? WinningAmount { get; set; }
+        public bool IsCompleted { get; set; }
+
+        public User? WinnerUser { get; set; }
     }
 }

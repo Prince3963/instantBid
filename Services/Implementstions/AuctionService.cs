@@ -10,13 +10,15 @@ namespace instantBid.Services.Implementstions
     public class AuctionService : IauctionServiceInterface
     {
         private readonly IAuctionRepoInterface auctionRepo;
+        private readonly IBidRepoInterface bidRepo;
         private readonly IItemRepoInterface itemRepo;
         private readonly CloudinaryService cloudinaryService;
-        public AuctionService(IItemRepoInterface itemRepo, CloudinaryService cloudinaryService, IAuctionRepoInterface auctionRepo)
+        public AuctionService(IItemRepoInterface itemRepo, IBidRepoInterface bidRepo,  CloudinaryService cloudinaryService, IAuctionRepoInterface auctionRepo)
         {
             this.auctionRepo = auctionRepo;
             this.itemRepo = itemRepo;
             this.cloudinaryService = cloudinaryService;
+            this.bidRepo = bidRepo;
         }
 
         public async Task<ServiceResponses<string>> addAuction(AuctionDTO auctionDTO)
@@ -75,6 +77,61 @@ namespace instantBid.Services.Implementstions
             }
         }
 
+        public async Task<ServiceResponses<Auction?>> AnnounceWinner(int auctionId)
+        {
+            var response = new ServiceResponses<Auction?>();
+            try
+            {
+                var auction = await auctionRepo.AnnounceWinner(auctionId);
+
+
+                if (auction == null)
+                {
+                    response.data = null;
+                    response.message = "Winner not announced";
+                    response.status = false;
+                    return response;
+                }
+
+                if (auction.IsCompleted)
+                {
+                    //response.data = auction.WinnerUser;
+                    response.message = "Winner announced";
+                    response.status = true;
+
+                    return response;
+                }
+
+                var highestBid = await bidRepo.BidByAuction(auctionId);
+
+                if (highestBid == null)
+                {
+                    response.data = null;
+                    response.message = "Bids are not availabel";
+                    response.status = false;
+                    return response;
+                }
+
+                auction.WinnerUserId = highestBid.UserId;
+                auction.IsCompleted = true;
+
+                response.data = auction;
+                response.message = "Winner Found";
+                response.status = true;
+
+                return response;
+
+            }
+            catch(Exception ex)
+            {
+                response.data = null;
+                response.message = ex.ToString();
+                response.status = false;
+
+                return response;
+            }
+        }
+
         // Get all auctions with items
         public async Task<ServiceResponses<List<AuctionDTO>>> GetAllAuctions()
         {
@@ -124,7 +181,6 @@ namespace instantBid.Services.Implementstions
                 return response;
             }
         }
-
 
         public async Task<ServiceResponses<Auction>> GetAuctionById(int id)
         {

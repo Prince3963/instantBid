@@ -7,5 +7,6 @@ namespace instantBid.Repositories.Interfaces
         public Task<List<BidHistory>> GetAllBids();
         public Task<List<BidHistory>> getBidsByAuctionId(int id);
         public Task<List<BidHistory>> getBidsByUser(int id);
+        Task<BidHistory> BidByAuction(int auctionId);
     }
 }

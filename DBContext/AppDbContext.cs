@@ -15,6 +15,7 @@ namespace instantBid.DBContext
         public DbSet<Auction> Auctions { get; set; }
         public DbSet<Items> Items { get; set; }
         public DbSet<BidHistory> BidHistories { get; set; }
+        public DbSet<Winner> Winners { get; set; }
 
 
 
@@ -58,6 +59,12 @@ namespace instantBid.DBContext
                 .WithMany(u => u.Items)
                 .HasForeignKey(i => i.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Auction>()
+            .HasOne(a => a.WinnerUser)
+            .WithMany()
+            .HasForeignKey(a => a.WinnerUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             //Seed Admin Data
             modelBuilder.Entity<User>().HasData(

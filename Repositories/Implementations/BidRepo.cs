@@ -12,6 +12,18 @@ namespace instantBid.Repositories.Implementations
         {
             this.dbContext = dbContext;
         }
+
+        public async Task<BidHistory> BidByAuction(int auctionId)
+        {
+            var result = await dbContext.BidHistories
+                 .Include(b => b.User)
+                 .Where(a => a.AuctionId == auctionId)
+                 .OrderByDescending(b => b.BidAmount)
+                 .FirstOrDefaultAsync();
+
+            return result;
+        }
+
         public async Task<List<BidHistory>> GetAllBids()
         {
             var result = await dbContext.BidHistories
